@@ -1,31 +1,21 @@
-import React from "react";
+import { useAuth } from "@clerk/clerk-react";
+import { Navigate, Outlet } from "react-router-dom";
+import LoadingSpinner from "./LoadingSpinner";
 
-import {
-  Navigate,
-} from "react-router-dom";
+export default function ProtectedRoute() {
+  const { isLoaded, isSignedIn } = useAuth();
 
-const ProtectedRoute = ({
-  children,
-}) => {
-
-  const token =
-    localStorage.getItem(
-      "token"
-    );
-
-  // NOT LOGGED IN
-  if (!token) {
-
+  if (!isLoaded) {
     return (
-      <Navigate
-        to="/login"
-      />
+      <div className="min-h-screen flex items-center justify-center bg-luxury-bg">
+        <LoadingSpinner />
+      </div>
     );
-
   }
 
-  // LOGGED IN
-  return children;
-};
+  if (!isSignedIn) {
+    return <Navigate to="/?auth=sign-in" replace />;
+  }
 
-export default ProtectedRoute;
+  return <Outlet />;
+}

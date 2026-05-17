@@ -1,104 +1,62 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useClerk } from "@clerk/clerk-react";
+import { Link } from "react-router-dom";
+import ThemeSwitcher from "./components/ThemeSwitcher";
 
 const Navbar = () => {
+  const { signOut } = useClerk();
 
-  const navigate = useNavigate();
-
-  // =========================
-  // LOGOUT
-  // =========================
   const handleLogout = () => {
-
-    localStorage.removeItem("token")
-
-    navigate("/");
-
+    signOut({ redirectUrl: "/" });
   };
 
   return (
-
-    <nav className="w-full flex justify-between items-center px-12 py-4 bg-white shadow-md sticky top-0 z-50">
-
-      {/* LOGO */}
-      <div className="font-satisfy text-2xl font-semibold text-[#2b2d42]">
-
-        <Link to="/">
-          Verify
-          <span className="text-[#5c7cfa]">
-            Careers
-          </span>
+    <nav className="w-full flex justify-between items-center px-6 sm:px-12 py-4 border-b border-luxury-border bg-luxury-nav backdrop-blur-md sticky top-0 z-50 transition-colors duration-500">
+      <div className="font-display text-xl sm:text-2xl font-semibold tracking-luxury text-luxury-ink">
+        <Link to="/" className="hover:opacity-90 transition-opacity">
+          Verify<span className="text-luxury-accent">Careers</span>
         </Link>
-
       </div>
 
-      {/* NAV LINKS */}
-      <ul className="flex gap-8 items-center text-[16px] font-medium text-gray-700">
-
-        {/* ANALYZE */}
+      <ul className="hidden md:flex gap-6 lg:gap-8 items-center text-[15px] font-medium text-luxury-body">
         <li>
-
-          <Link
-            to="/analyze"
-            className="hover:text-[#5c7cfa] transition duration-300"
-          >
+          <Link to="/analyze" className="hover:text-luxury-accent transition-colors duration-300">
             Analyze
           </Link>
-
         </li>
-
-        {/* DASHBOARD */}
         <li>
-
-          <Link
-            to="/dashboard"
-            className="hover:text-[#5c7cfa] transition duration-300"
-          >
+          <Link to="/dashboard" className="hover:text-luxury-accent transition-colors duration-300">
             Dashboard
           </Link>
-
         </li>
-
-        {/* RESUME */}
         <li>
-
-          <Link
-            to="/resume"
-            className="hover:text-[#5c7cfa] transition duration-300"
-          >
+          <Link to="/resume" className="hover:text-luxury-accent transition-colors duration-300">
             Resume Analyzer
           </Link>
-
         </li>
-
-        {/* COMMUNITY */}
         <li>
-
-          <Link
-            to="/community"
-            className="hover:text-[#5c7cfa] transition duration-300"
-          >
-            Community Forum
+          <Link to="/community" className="hover:text-luxury-accent transition-colors duration-300">
+            Community
           </Link>
-
         </li>
-
-        {/* LOGOUT */}
         <li>
-
+          <ThemeSwitcher />
+        </li>
+        <li>
           <button
+            type="button"
             onClick={handleLogout}
-            className="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 shadow-sm"
+            className="text-luxury-coral hover:opacity-80 transition-opacity duration-300"
           >
             Logout
           </button>
-
         </li>
-
       </ul>
 
+      <div className="flex md:hidden items-center gap-1">
+        <ThemeSwitcher />
+      </div>
     </nav>
-
   );
 };
 

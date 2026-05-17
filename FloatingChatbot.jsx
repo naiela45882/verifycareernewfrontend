@@ -92,7 +92,7 @@ const FloatingChatbot = () => {
         onClick={() =>
           setOpen(!open)
         }
-        className="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-2xl flex items-center justify-center text-2xl z-50 transition-all duration-300"
+        className="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-luxury-accent hover:bg-luxury-accent-hover text-luxury-on-accent shadow-elevated flex items-center justify-center text-2xl z-50 transition-all duration-300"
       >
         🤖
       </button>
@@ -100,10 +100,10 @@ const FloatingChatbot = () => {
       {/* CHAT WINDOW */}
       {open && (
 
-        <div className="fixed bottom-24 right-6 w-[370px] h-[550px] bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden z-50">
+        <div className="fixed bottom-24 right-6 w-[370px] h-[550px] bg-luxury-surface rounded-3xl shadow-2xl border border-luxury-border flex flex-col overflow-hidden z-50">
 
           {/* HEADER */}
-          <div className="bg-blue-500 text-white p-5">
+          <div className="bg-luxury-accent text-luxury-on-accent p-5">
 
             <h2 className="text-xl font-bold">
               VerifyCareers AI
@@ -116,7 +116,7 @@ const FloatingChatbot = () => {
           </div>
 
           {/* CHAT AREA */}
-          <div className="flex-1 overflow-y-auto p-4 bg-[#f7f9fc] space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 bg-luxury-muted space-y-4">
 
             {messages.map(
               (msg, index) => (
@@ -135,8 +135,8 @@ const FloatingChatbot = () => {
                     className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm shadow-sm ${
                       msg.sender ===
                       "user"
-                        ? "bg-blue-500 text-white rounded-br-md"
-                        : "bg-white text-gray-700 border border-gray-100 rounded-bl-md"
+                        ? "bg-luxury-accent text-luxury-on-accent rounded-br-md"
+                        : "bg-luxury-surface text-luxury-ink border border-luxury-border rounded-bl-md"
                     }`}
                   >
                     {msg.text}
@@ -150,7 +150,7 @@ const FloatingChatbot = () => {
           </div>
 
           {/* INPUT */}
-          <div className="p-4 border-t border-gray-100 bg-white flex gap-3">
+          <div className="p-4 border-t border-luxury-border bg-luxury-surface flex gap-3">
 
             <input
               type="text"
@@ -161,14 +161,14 @@ const FloatingChatbot = () => {
                   e.target.value
                 )
               }
-              className="flex-1 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-100"
+              className="flex-1 border border-luxury-border rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-luxury-accent/20"
             />
 
             <button
               onClick={
                 handleSend
               }
-              className="bg-blue-500 hover:bg-blue-600 text-white px-5 rounded-2xl transition-all duration-300"
+              className="bg-luxury-accent hover:bg-luxury-accent-hover text-luxury-on-accent px-5 rounded-2xl transition-all duration-300"
             >
               Send
             </button>

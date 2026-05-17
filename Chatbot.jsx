@@ -103,16 +103,16 @@ const Chatbot = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-[#f5f5f5] flex flex-col items-center p-8">
+      <div className="min-h-screen bg-luxury-bg transition-colors duration-500 flex flex-col items-center p-8">
 
         {/* HEADER */}
         <div className="w-full max-w-4xl mb-6">
 
-          <h1 className="text-5xl font-bold text-gray-800">
+          <h1 className="text-5xl font-bold text-luxury-ink">
             AI Career Assistant
           </h1>
 
-          <p className="text-gray-500 mt-2 text-lg">
+          <p className="text-luxury-body mt-2 text-lg">
             Get AI-powered career guidance, resume help, interview tips, and scam protection
           </p>
 
@@ -125,7 +125,7 @@ const Chatbot = () => {
             <button
               key={index}
               onClick={() => sendMessage(item)}
-              className="bg-white border hover:bg-blue-50 transition px-4 py-2 rounded-full text-sm shadow-sm"
+              className="bg-luxury-surface border hover:bg-luxury-muted transition px-4 py-2 rounded-full text-sm shadow-sm"
             >
               {item}
             </button>
@@ -134,13 +134,13 @@ const Chatbot = () => {
         </div>
 
         {/* CHAT BOX */}
-        <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl flex flex-col h-[70vh]">
+        <div className="w-full max-w-4xl bg-luxury-surface rounded-3xl shadow-xl flex flex-col h-[70vh]">
 
           {/* MESSAGES */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
 
             {chat.length === 0 ? (
-              <div className="text-center mt-20 text-gray-400">
+              <div className="text-center mt-20 text-luxury-caption">
 
                 <h2 className="text-2xl mb-4">
                   🤖 AI Assistant Ready
@@ -166,8 +166,8 @@ const Chatbot = () => {
                   <div
                     className={`max-w-[75%] px-5 py-4 rounded-3xl shadow-sm ${
                       msg.sender === "user"
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 text-gray-800"
+                        ? "bg-luxury-accent text-luxury-on-accent"
+                        : "bg-luxury-muted text-luxury-ink"
                     }`}
                   >
                     {msg.text}
@@ -181,7 +181,7 @@ const Chatbot = () => {
             {loading && (
               <div className="flex justify-start">
 
-                <div className="bg-gray-100 px-5 py-4 rounded-3xl shadow-sm text-gray-600 animate-pulse">
+                <div className="bg-luxury-muted px-5 py-4 rounded-3xl shadow-sm text-luxury-body animate-pulse">
                   🤖 VerifyCareers AI is typing...
                 </div>
 
@@ -196,7 +196,7 @@ const Chatbot = () => {
             <input
               type="text"
               placeholder="Ask something..."
-              className="flex-1 border rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="flex-1 border rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-luxury-accent/20"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -204,7 +204,7 @@ const Chatbot = () => {
 
             <button
               onClick={() => sendMessage()}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl transition"
+              className="bg-luxury-accent hover:bg-luxury-accent text-luxury-on-accent px-8 py-4 rounded-2xl transition"
             >
               Send
             </button>

@@ -51,7 +51,7 @@ placeholder="Paste job offer text here or upload a PDF"
 <button
 onClick={handleAnalyze}
 disabled={loading}
-className="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-60"
+className="px-4 py-2 bg-luxury-accent text-white rounded disabled:opacity-60"
 >
 Analyze
 </button>

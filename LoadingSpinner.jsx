@@ -3,7 +3,7 @@ export default function LoadingSpinner({ size = 6 }) {
 return (
 <div className="flex items-center justify-center">
 <svg
-className={`animate-spin h-${size} w-${size} text-indigo-600`}
+className={`animate-spin h-${size} w-${size} text-luxury-accent`}
 xmlns="http://www.w3.org/2000/svg"
 fill="none"
 viewBox="0 0 24 24"

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useAuthedFetch } from "../hooks/useAuthedFetch";
 
 const Dashboard = () => {
+  const authedFetch = useAuthedFetch();
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -9,14 +11,7 @@ const Dashboard = () => {
   // =========================
   const fetchHistory = async () => {
     try {
-      const res = await fetch(
-        "https://verifycareers-backend.onrender.com/api/upload/history",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await authedFetch("/api/upload/history");
 
       const data = await res.json();
 
@@ -38,15 +33,15 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] p-8">
+    <div className="min-h-screen bg-luxury-bg p-8">
 
       {/* HEADER */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800">
+        <h1 className="text-4xl font-bold text-luxury-ink">
           Dashboard
         </h1>
 
-        <p className="text-gray-500 mt-2">
+        <p className="text-luxury-body mt-2">
           View your previous scam analysis reports
         </p>
       </div>
@@ -57,12 +52,12 @@ const Dashboard = () => {
       ) : history.length === 0 ? (
 
         // EMPTY STATE
-        <div className="bg-white rounded-xl shadow p-8 text-center">
+        <div className="bg-luxury-surface rounded-xl shadow p-8 text-center">
           <h2 className="text-2xl font-semibold mb-2">
             No scans yet
           </h2>
 
-          <p className="text-gray-500">
+          <p className="text-luxury-body">
             Upload and analyze your first job offer
           </p>
         </div>
@@ -76,7 +71,7 @@ const Dashboard = () => {
 
             <div
               key={item._id}
-              className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition"
+              className="bg-luxury-surface rounded-2xl shadow-soft p-6 hover:shadow-xl transition"
             >
 
               {/* SCORE */}
@@ -86,12 +81,12 @@ const Dashboard = () => {
                 </h2>
 
                 <span
-                  className={`px-3 py-1 rounded-full text-white text-sm ${
+                  className={`px-3 py-1 rounded-full text-luxury-on-accent text-sm ${
                     item.response?.scamScore >= 70
-                      ? "bg-red-500"
+                      ? "bg-luxury-coral"
                       : item.response?.scamScore >= 40
-                      ? "bg-yellow-500"
-                      : "bg-green-500"
+                      ? "bg-luxury-sun"
+                      : "bg-luxury-accent"
                   }`}
                 >
                   {item.response?.scamScore || 0}%
@@ -99,18 +94,18 @@ const Dashboard = () => {
               </div>
 
               {/* SUMMARY */}
-              <p className="text-gray-700 mb-4">
+              <p className="text-luxury-ink mb-4">
                 {item.response?.summary || "No summary available"}
               </p>
 
               {/* RED FLAGS */}
               {item.response?.redFlags?.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="font-semibold text-red-600 mb-1">
+                  <h3 className="font-semibold text-luxury-coral mb-1">
                     Red Flags:
                   </h3>
 
-                  <ul className="list-disc ml-5 text-sm text-gray-700">
+                  <ul className="list-disc ml-5 text-sm text-luxury-ink">
                     {item.response.redFlags.map((flag, index) => (
                       <li key={index}>{flag}</li>
                     ))}
@@ -119,7 +114,7 @@ const Dashboard = () => {
               )}
 
               {/* DATE */}
-              <div className="text-sm text-gray-400 mt-4">
+              <div className="text-sm text-luxury-caption mt-4">
                 {new Date(item.createdAt).toLocaleString()}
               </div>
 

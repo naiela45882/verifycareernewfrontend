@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import Navbar from "./Navbar";
+import { useAuthedFetch } from "./hooks/useAuthedFetch";
 
 const UploadRisk = () => {
+  const authedFetch = useAuthedFetch();
 
   const [sourceType, setSourceType] = useState("text");
   const [jobText, setJobText] = useState("");
@@ -17,8 +18,6 @@ const UploadRisk = () => {
     setLoading(true);
 
     setAnalysis(null);
-
-    const token = localStorage.getItem("token");
 
     // ==============================
     // STEP 1 → UPLOAD OFFER
@@ -41,16 +40,10 @@ const UploadRisk = () => {
       formData.append("text", jobText);
     }
 
-    const uploadResponse = await fetch(
-      "https://verifycareers-backend.onrender.com/api/upload/upload-offer",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      }
-    );
+    const uploadResponse = await authedFetch("/api/upload/upload-offer", {
+      method: "POST",
+      body: formData,
+    });
 
     const uploadData = await uploadResponse.json();
 
@@ -59,20 +52,15 @@ const UploadRisk = () => {
     // ==============================
     // STEP 2 → ANALYZE OFFER
     // ==============================
-    const analyzeResponse = await fetch(
-      "https://verifycareers-backend.onrender.com/api/upload/analyze-offer",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-
-        body: JSON.stringify({
-          historyId: uploadData.historyId,
-        }),
-      }
-    );
+    const analyzeResponse = await authedFetch("/api/upload/analyze-offer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        historyId: uploadData.historyId,
+      }),
+    });
 
     const analyzeData = await analyzeResponse.json();
 
@@ -94,32 +82,28 @@ const UploadRisk = () => {
 };
 
   return (
-    <>
-      <Navbar />
-
-      <div className="min-h-screen bg-[#f6f8fc] p-6 lg:p-10">
-
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-[0.9fr_1.1fr] gap-8 items-stretch">
+    <div className="mx-auto max-w-7xl">
+        <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-8 items-stretch">
 
           {/* LEFT SIDE */}
-          <div className="bg-white rounded-[32px] shadow-lg border border-gray-100 p-8 h-full">
+          <div className="bg-luxury-surface rounded-[32px] shadow-lg border border-luxury-border p-8 h-full">
 
             {/* HEADER */}
             <div className="mb-8">
 
               <div className="flex items-center gap-4 mb-3">
 
-                <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-3xl shadow-lg">
+                <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-luxury-accent to-luxury-accent-hover flex items-center justify-center text-luxury-on-accent text-3xl shadow-lg">
                   🛡️
                 </div>
 
                 <div>
 
-                  <h1 className="text-4xl font-bold text-[#111827]">
+                  <h1 className="text-4xl font-bold text-luxury-ink">
                     AI Scam Detection
                   </h1>
 
-                  <p className="text-gray-500 mt-1 text-lg">
+                  <p className="text-luxury-body mt-1 text-lg">
                     Analyze suspicious job offers using intelligent AI risk analysis
                   </p>
 
@@ -132,14 +116,14 @@ const UploadRisk = () => {
             {/* SOURCE TYPE */}
             <div className="mb-6">
 
-              <label className="block text-gray-700 font-semibold mb-3 text-lg">
+              <label className="block text-luxury-ink font-semibold mb-3 text-lg">
                 Job Offer Source
               </label>
 
               <select
                 value={sourceType}
                 onChange={(e) => setSourceType(e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 outline-none focus:border-blue-500 transition bg-white text-lg"
+                className="w-full border-2 border-luxury-border rounded-2xl px-5 py-4 outline-none focus:border-luxury-accent transition bg-luxury-surface text-lg"
               >
 
                 <option value="text">
@@ -166,7 +150,7 @@ const UploadRisk = () => {
                   value={jobText}
                   onChange={(e) => setJobText(e.target.value)}
                   placeholder="Paste suspicious job offer here..."
-                  className="w-full h-[260px] border-2 border-gray-200 rounded-3xl p-5 outline-none resize-none focus:border-blue-500 transition text-gray-700 text-lg"
+                  className="w-full h-[260px] border-2 border-luxury-border rounded-3xl p-5 outline-none resize-none focus:border-luxury-accent transition text-luxury-ink text-lg"
                 />
 
                 <button
@@ -185,7 +169,7 @@ Limited slots available. Contact HR only on Telegram.
 Guaranteed selection without interview.`
                     )
                   }
-                  className="mt-4 text-sm text-blue-500 hover:text-blue-700 font-medium"
+                  className="mt-4 text-sm text-luxury-accent hover:text-luxury-accent font-medium"
                 >
 
                   + Use suspicious sample text
@@ -201,23 +185,23 @@ Guaranteed selection without interview.`
 
   <div className="mb-6">
 
-    <label className="w-full h-[260px] border-2 border-dashed border-blue-300 rounded-3xl flex flex-col items-center justify-center bg-blue-50 hover:bg-blue-100 transition cursor-pointer">
+    <label className="w-full h-[260px] border-2 border-dashed border-luxury-accent/40 rounded-3xl flex flex-col items-center justify-center bg-luxury-muted hover:bg-luxury-muted transition cursor-pointer">
 
       <div className="text-7xl mb-4">
         📄
       </div>
 
-      <p className="text-xl font-semibold text-gray-700">
+      <p className="text-xl font-semibold text-luxury-ink">
         Upload Suspicious PDF
       </p>
 
-      <p className="text-gray-500 mt-2 text-sm">
+      <p className="text-luxury-body mt-2 text-sm">
         Drag & drop or click to browse
       </p>
 
       {file && (
 
-        <div className="mt-4 bg-white px-4 py-2 rounded-xl shadow text-sm font-medium text-blue-600">
+        <div className="mt-4 bg-luxury-surface px-4 py-2 rounded-xl shadow text-sm font-medium text-luxury-accent">
           {file.name}
         </div>
 
@@ -243,23 +227,23 @@ Guaranteed selection without interview.`
 
   <div className="mb-6">
 
-    <label className="w-full h-[260px] border-2 border-dashed border-pink-300 rounded-3xl flex flex-col items-center justify-center bg-pink-50 hover:bg-pink-100 transition cursor-pointer">
+    <label className="w-full h-[260px] border-2 border-dashed border-luxury-coral/40 rounded-3xl flex flex-col items-center justify-center bg-luxury-muted hover:bg-luxury-muted transition cursor-pointer">
 
       <div className="text-7xl mb-4">
         🖼️
       </div>
 
-      <p className="text-xl font-semibold text-gray-700">
+      <p className="text-xl font-semibold text-luxury-ink">
         Upload Scam Screenshot
       </p>
 
-      <p className="text-gray-500 mt-2 text-sm">
+      <p className="text-luxury-body mt-2 text-sm">
         JPG, PNG, WhatsApp, Telegram screenshots
       </p>
 
       {file && (
 
-        <div className="mt-4 bg-white px-4 py-2 rounded-xl shadow text-sm font-medium text-pink-600">
+        <div className="mt-4 bg-luxury-surface px-4 py-2 rounded-xl shadow text-sm font-medium text-luxury-coral">
           {file.name}
         </div>
 
@@ -286,11 +270,11 @@ Guaranteed selection without interview.`
             <button
               onClick={handleAnalyze}
               disabled={loading}
-              className={`w-full py-4 rounded-2xl text-white text-xl font-semibold shadow-lg transition flex items-center justify-center gap-3
+              className={`w-full py-4 rounded-2xl text-luxury-on-accent text-xl font-semibold shadow-lg transition flex items-center justify-center gap-3
               ${
                 loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-red-500 to-orange-500 hover:scale-[1.02]"
+                  ? "bg-luxury-caption cursor-not-allowed"
+                  : "bg-gradient-to-r from-luxury-coral to-luxury-sun hover:scale-[1.02]"
               }`}
             >
 
@@ -308,24 +292,24 @@ Guaranteed selection without interview.`
           </div>
 
           {/* RIGHT SIDE */}
-          <div className="bg-white rounded-[32px] shadow-lg border border-gray-100 p-8 h-full">
+          <div className="bg-luxury-surface rounded-[32px] shadow-lg border border-luxury-border p-8 h-full">
 
             {/* HEADER */}
             <div className="flex items-start justify-between mb-8">
 
               <div>
 
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-luxury-coral to-luxury-sun bg-clip-text text-transparent">
                   Risk Analysis
                 </h2>
 
                 <div>
 
-  <p className="text-gray-500 mt-2 text-lg">
+  <p className="text-luxury-body mt-2 text-lg">
     AI-generated scam probability assessment
   </p>
 
-  <p className="text-sm text-gray-500 mt-1">
+  <p className="text-sm text-luxury-body mt-1">
 
     Powered by: {
 
@@ -340,7 +324,7 @@ Guaranteed selection without interview.`
 </div>
               </div>
 
-              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-5xl shadow-lg">
+              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-luxury-coral to-luxury-sun flex items-center justify-center text-5xl shadow-lg">
                 ⚠️
               </div>
 
@@ -352,13 +336,13 @@ Guaranteed selection without interview.`
 
                 {loading ? (
                   <>
-                    <div className="w-24 h-24 rounded-full border-[10px] border-blue-100 border-t-blue-500 animate-spin mb-8"></div>
+                    <div className="w-24 h-24 rounded-full border-[10px] border-luxury-border border-t-luxury-accent animate-spin mb-8"></div>
 
-                    <h3 className="text-3xl font-bold text-[#111827] mb-4">
+                    <h3 className="text-3xl font-bold text-luxury-ink mb-4">
                       AI Analysis in Progress...
                     </h3>
 
-                    <p className="text-gray-500 max-w-md leading-relaxed text-lg">
+                    <p className="text-luxury-body max-w-md leading-relaxed text-lg">
                       Scanning recruiter patterns, salary claims,
                       suspicious keywords, and scam indicators.
                     </p>
@@ -369,11 +353,11 @@ Guaranteed selection without interview.`
                       🤖
                     </div>
 
-                    <h3 className="text-4xl font-bold text-[#1e293b] mb-4">
+                    <h3 className="text-4xl font-bold text-luxury-ink mb-4">
                       No Analysis Yet
                     </h3>
 
-                    <p className="text-gray-500 text-lg max-w-md leading-relaxed">
+                    <p className="text-luxury-body text-lg max-w-md leading-relaxed">
                       Upload a suspicious PDF or paste a recruiter offer
                       to generate an intelligent AI scam analysis.
                     </p>
@@ -387,26 +371,26 @@ Guaranteed selection without interview.`
               <div className="space-y-8">
 
                 {/* SCORE */}
-                <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-100 rounded-3xl p-7 flex items-center justify-between">
+                <div className="bg-gradient-to-r bg-luxury-muted border border-luxury-coral/30 rounded-3xl p-7 flex items-center justify-between">
 
                   <div>
 
-                    <p className="text-gray-500 text-xl mb-2">
+                    <p className="text-luxury-body text-xl mb-2">
                       Scam Probability
                     </p>
 
-                    <h1 className="text-7xl font-bold text-red-500">
+                    <h1 className="text-7xl font-bold text-luxury-coral">
   {Math.min(analysis.scamScore, 100)}%
 </h1>
 
                   </div>
 
-                  <div className="bg-white rounded-3xl px-8 py-6 shadow-sm text-center">
+                  <div className="bg-luxury-surface rounded-3xl px-8 py-6 shadow-sm text-center">
 
-                    <p className="text-gray-500 text-lg">
+                    <p className="text-luxury-body text-lg">
                       Confidence
                     </p>
-                     <h2 className="text-5xl font-bold text-blue-500">
+                     <h2 className="text-5xl font-bold text-luxury-accent">
                       {analysis.confidence || 91}%
                  
                         </h2> 
@@ -418,11 +402,11 @@ Guaranteed selection without interview.`
                 {/* SUMMARY */}
                 <div>
 
-                  <h3 className="text-3xl font-bold text-[#111827] mb-4">
+                  <h3 className="text-3xl font-bold text-luxury-ink mb-4">
                     Summary
                   </h3>
 
-                  <div className="bg-[#f8fafc] border border-gray-100 rounded-2xl p-5 text-gray-700 text-lg leading-relaxed">
+                  <div className="bg-luxury-muted border border-luxury-border rounded-2xl p-5 text-luxury-ink text-lg leading-relaxed">
 
                     {analysis.summary}
                   </div>
@@ -432,25 +416,25 @@ Guaranteed selection without interview.`
                 {/* RISK BREAKDOWN */}
                 <div>
 
-                  <h3 className="text-3xl font-bold text-[#111827] mb-5">
+                  <h3 className="text-3xl font-bold text-luxury-ink mb-5">
                     Risk Breakdown
                   </h3>
 
                   <div className="space-y-4">
 
                     {[
-                      ["💳 Payment Risk", "HIGH", "text-red-500"],
+                      ["💳 Payment Risk", "HIGH", "text-luxury-coral"],
                       ["📱 Communication", "SUSPICIOUS", "text-orange-500"],
-                      ["💰 Salary Claim", "UNREALISTIC", "text-yellow-500"],
-                      ["🏢 Company Presence", "NOT VERIFIED", "text-red-500"],
+                      ["💰 Salary Claim", "UNREALISTIC", "text-luxury-sun"],
+                      ["🏢 Company Presence", "NOT VERIFIED", "text-luxury-coral"],
                     ].map((item, index) => (
 
                       <div
                         key={index}
-                        className="bg-[#f8fafc] border border-gray-100 rounded-2xl px-5 py-5 flex items-center justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+                        className="bg-luxury-muted border border-luxury-border rounded-2xl px-5 py-5 flex items-center justify-between transition-all duration-300 hover:shadow-soft hover:-translate-y-1"
                       >
 
-                        <span className="text-lg font-medium text-gray-700">
+                        <span className="text-lg font-medium text-luxury-ink">
                           {item[0]}
                         </span>
 
@@ -469,7 +453,7 @@ Guaranteed selection without interview.`
                 {/* RED FLAGS */}
                 <div>
 
-                  <h3 className="text-3xl font-bold text-red-500 mb-5">
+                  <h3 className="text-3xl font-bold text-luxury-coral mb-5">
                     Detected Red Flags
                   </h3>
 
@@ -479,7 +463,7 @@ Guaranteed selection without interview.`
 
   <div
     key={index}
-    className="bg-red-50 border border-red-100 rounded-full px-4 py-2 text-xs text-red-600 font-medium transition-all duration-300 hover:scale-105"
+    className="bg-luxury-muted border border-luxury-coral/30 rounded-full px-4 py-2 text-xs text-luxury-coral font-medium transition-all duration-300 hover:scale-105"
   >
 
     🚨 {flag}
@@ -495,23 +479,23 @@ Guaranteed selection without interview.`
                 {/* RECOMMENDATIONS */}
                 <div>
 
-                  <h3 className="text-3xl font-bold text-green-600 mb-5">
+                  <h3 className="text-3xl font-bold text-luxury-accent mb-5">
                     Safety Recommendations
                   </h3>
 
                   <div className="grid gap-4">
 
-                    <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 text-green-700 text-[15px] font-medium flex items-center gap-3 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+                    <div className="bg-luxury-muted border border-luxury-accent/30 rounded-2xl px-4 py-3 text-luxury-accent text-[15px] font-medium flex items-center gap-3 transition-all duration-300 hover:shadow-soft hover:-translate-y-1">
                       <span className="text-lg">✅</span>
                       <span>Never pay registration or processing fees</span>
                     </div>
 
-                    <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 text-green-700 text-[15px] font-medium flex items-center gap-3 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+                    <div className="bg-luxury-muted border border-luxury-accent/30 rounded-2xl px-4 py-3 text-luxury-accent text-[15px] font-medium flex items-center gap-3 transition-all duration-300 hover:shadow-soft hover:-translate-y-1">
                       <span className="text-lg">🌐</span>
                       <span>Verify company website and LinkedIn presence</span>
                     </div>
 
-                    <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 text-green-700 text-[15px] font-medium flex items-center gap-3 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+                    <div className="bg-luxury-muted border border-luxury-accent/30 rounded-2xl px-4 py-3 text-luxury-accent text-[15px] font-medium flex items-center gap-3 transition-all duration-300 hover:shadow-soft hover:-translate-y-1">
                       <span className="text-lg">📧</span>
                       <span>Check recruiter email domains carefully</span>
                     </div>
@@ -527,9 +511,7 @@ Guaranteed selection without interview.`
           </div>
 
         </div>
-
-      </div>
-    </>
+    </div>
   );
 };
 

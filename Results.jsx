@@ -6,7 +6,7 @@ export default function Results({ result }) {
   if (!result) {
     return (
       <div className="max-w-3xl mx-auto p-6">
-        <p className="text-gray-500">No result to show. Run an analysis first.</p>
+        <p className="text-luxury-body">No result to show. Run an analysis first.</p>
       </div>
     );
   }
@@ -20,7 +20,7 @@ export default function Results({ result }) {
 
       <div className="mb-6">
         <h3 className="font-medium">Notes</h3>
-        <ul className="list-disc ml-5 text-gray-700">
+        <ul className="list-disc ml-5 text-luxury-ink">
           {result.notes?.map((n, i) => (
             <li key={i}>{n}</li>
           ))}

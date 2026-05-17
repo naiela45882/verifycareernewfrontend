@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="VerifyCareers">
+  <rect width="32" height="32" rx="8" fill="#0d9488"/>
+  <path
+    fill="#fff"
+    d="M9 10h14v2.2H18.4L23 22h-3.2l-4.2-7.4-4.2 7.4H8.2L13 12.2H9V10z"
+  />
+</svg>

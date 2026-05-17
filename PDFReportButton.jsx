@@ -24,7 +24,7 @@ alert('Failed to generate PDF');
 return (
 <button
 onClick={handleDownload}
-className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+className="inline-flex items-center gap-2 px-3 py-2 bg-luxury-accent text-white rounded hover:bg-luxury-accent-hover"
 >
 Download Report
 </button>

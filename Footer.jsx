@@ -3,21 +3,21 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-12 px-8">
+    <footer className="bg-luxury-ink text-white py-12 px-8">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-6">
         <div>
           <h3 className="text-xl font-semibold mb-2">VerifyCareers</h3>
-          <p className="text-gray-300 text-sm">
+          <p className="text-luxury-body text-sm">
             Helping students and job seekers detect job scams through intelligent analysis of offers and communications.
           </p>
         </div>
         <div>
           <h4 className="font-semibold mb-2">Quick Links</h4>
           <ul>
-            <li><a href="#about" className="hover:text-green-500 transition">About</a></li>
-            <li><a href="#login-section" className="hover:text-green-500 transition">Login</a></li>
-            <li><a href="#about" className="hover:text-green-500 transition">Features</a></li>
-            <li><a href="#contact" className="hover:text-green-500 transition">Contact</a></li>
+            <li><a href="#about" className="hover:text-luxury-accent transition">About</a></li>
+            <li><a href="#login-section" className="hover:text-luxury-accent transition">Login</a></li>
+            <li><a href="#about" className="hover:text-luxury-accent transition">Features</a></li>
+            <li><a href="#contact" className="hover:text-luxury-accent transition">Contact</a></li>
           </ul>
         </div>
         <div>
@@ -29,7 +29,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="text-center mt-8 border-t border-gray-700 pt-4 text-gray-400 text-sm">
+      <div className="text-center mt-8 border-t border-luxury-border pt-4 text-luxury-caption text-sm">
         &copy; 2025 VerifyCareers. All rights reserved.
       </div>
     </footer>

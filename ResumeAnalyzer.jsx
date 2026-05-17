@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import axios from "axios";
-import Navbar from "./Navbar";
+import { Link } from "react-router-dom";
+import { useResume } from "./hooks/useResume";
 
 const ResumeAnalyzer = () => {
+  const {
+    resume: storedResume,
+    hasResume,
+    loading: resumeLoading,
+    uploadResume,
+    analyzeResume,
+  } = useResume();
 
-  const [resume, setResume] =
-    useState(null);
+  const [resume, setResume] = useState(null);
 
   const [jobDescription, setJobDescription] =
     useState("");
@@ -23,82 +29,44 @@ const ResumeAnalyzer = () => {
   // ANALYZE RESUME
   // =========================
   const handleAnalyze = async () => {
-
-    if (!resume) {
+    if (!resume && !hasResume) {
       alert("Upload a resume");
       return;
     }
 
-    if (
-      jdSource === "text" &&
-      !jobDescription
-    ) {
-      alert(
-        "Please paste job description"
-      );
+    if (jdSource === "text" && !jobDescription) {
+      alert("Please paste job description");
       return;
     }
 
     try {
-
       setLoading(true);
-
-      const formData =
-        new FormData();
-
-      formData.append(
-        "resume",
-        resume
-      );
-
-      formData.append(
-        "jobDescription",
-        jobDescription
-      );
-
-      const response =
-        await axios.post(
-          "https://verifycareers-backend.onrender.com/api/resume/parse",
-          formData
-        );
-
-      const data =
-        response.data;
-
+      const data = await analyzeResume(jobDescription, resume || null);
       setResult({
-        atsScore:
-          data.atsScore,
-
-        matchScore:
-          data.matchScore,
-
-        matchedSkills:
-          data.matchedSkills,
-
-        missingSkills:
-          data.missingSkills,
-
-        atsBreakdown:
-          data.atsBreakdown,
-
-        weaknesses:
-          data.weaknesses,
-
-        aiAnalysis:
-          data.aiAnalysis,
+        atsScore: data.atsScore,
+        matchScore: data.matchScore,
+        matchedSkills: data.matchedSkills,
+        missingSkills: data.missingSkills,
+        atsBreakdown: data.atsBreakdown,
+        weaknesses: data.weaknesses,
+        suggestions: data.suggestions,
+        aiAnalysis: data.aiAnalysis,
       });
-
     } catch (error) {
-
       console.error(error);
-
-      alert(
-        "Resume analysis failed"
-      );
-
+      alert("Resume analysis failed");
     } finally {
-
       setLoading(false);
+    }
+  };
+
+  const handleStoredUpload = async (file) => {
+    if (!file) return;
+    setResume(file);
+    try {
+      await uploadResume(file);
+    } catch {
+      alert("Upload failed");
     }
   };
 
@@ -121,22 +89,20 @@ const ResumeAnalyzer = () => {
   return (
 
     <>
-      <Navbar />
-
       {/* LOADING OVERLAY */}
       {loading && (
 
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
 
-          <div className="bg-white p-10 rounded-[32px] shadow-2xl text-center w-[400px]">
+          <div className="bg-luxury-surface p-10 rounded-[32px] shadow-2xl text-center w-[400px]">
 
-            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+            <div className="w-16 h-16 border-4 border-luxury-accent border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
 
-            <h3 className="text-3xl font-bold text-gray-800">
+            <h3 className="text-3xl font-bold text-luxury-ink">
               Analyzing Resume
             </h3>
 
-            <p className="text-gray-500 mt-3 text-lg">
+            <p className="text-luxury-body mt-3 text-lg">
               Gemini AI is processing your resume...
             </p>
 
@@ -146,59 +112,73 @@ const ResumeAnalyzer = () => {
 
       )}
 
-      <div className="min-h-screen bg-[#f5f7fb] p-8">
+      <div className="mx-auto max-w-7xl">
 
         {/* HEADER */}
         <div className="mb-10">
 
-          <h1 className="text-5xl font-bold text-gray-800 mb-3">
+          <h1 className="text-5xl font-bold text-luxury-ink mb-3">
             Resume Analyzer
           </h1>
 
-          <p className="text-gray-500 text-lg">
+          <p className="text-luxury-body text-lg">
             AI-powered resume and ATS compatibility checker
           </p>
 
         </div>
 
+        {hasResume && !resumeLoading && (
+          <p className="mb-6 rounded-lg border border-luxury-accent/25 bg-luxury-accent/5 px-4 py-3 text-[13px] text-luxury-body">
+            Using stored resume:{" "}
+            <span className="font-medium text-luxury-ink">
+              {storedResume?.fileName || "resume.pdf"}
+            </span>
+            . Upload a new file below to replace it, or{" "}
+            <Link to="/dashboard" className="text-luxury-accent hover:underline">
+              manage on dashboard
+            </Link>
+            .
+          </p>
+        )}
+
         <div className="grid lg:grid-cols-2 gap-8">
 
           {/* LEFT PANEL */}
-          <div className="bg-white p-8 rounded-[32px] shadow-lg border border-gray-100">
+          <div className="bg-luxury-surface p-8 rounded-[32px] shadow-lg border border-luxury-border">
 
-            <h2 className="text-4xl font-bold text-gray-800 mb-8">
+            <h2 className="text-4xl font-bold text-luxury-ink mb-8">
               Upload Resume
             </h2>
 
             {/* RESUME */}
             <div className="mb-8">
 
-              <label className="block text-lg font-semibold text-gray-700 mb-3">
+              <label className="block text-lg font-semibold text-luxury-ink mb-3">
                 Resume PDF
               </label>
 
-              <label className="flex items-center justify-center w-full border-2 border-dashed border-blue-300 bg-blue-50 hover:bg-blue-100 transition rounded-3xl p-8 cursor-pointer">
+              <label className="flex items-center justify-center w-full border-2 border-dashed border-luxury-accent/40 bg-luxury-muted hover:bg-luxury-muted transition rounded-3xl p-8 cursor-pointer">
 
                 <input
                   type="file"
                   className="hidden"
                   accept=".pdf"
                   onChange={(e) =>
-                    setResume(
-                      e.target.files[0]
-                    )
+                    handleStoredUpload(e.target.files[0])
                   }
                 />
 
                 <div className="text-center">
 
-                  <p className="text-blue-600 font-semibold text-2xl">
+                  <p className="text-luxury-accent font-semibold text-2xl">
                     {resume
                       ? resume.name
-                      : "Click to upload resume"}
+                      : hasResume
+                        ? storedResume?.fileName || "Stored resume ready"
+                        : "Click to upload resume"}
                   </p>
 
-                  <p className="text-gray-500 mt-2">
+                  <p className="text-luxury-body mt-2">
                     PDF format only
                   </p>
 
@@ -211,7 +191,7 @@ const ResumeAnalyzer = () => {
             {/* JD SOURCE */}
             <div className="mb-6">
 
-              <label className="block text-lg font-semibold text-gray-700 mb-3">
+              <label className="block text-lg font-semibold text-luxury-ink mb-3">
                 Job Description Source
               </label>
 
@@ -222,7 +202,7 @@ const ResumeAnalyzer = () => {
                     e.target.value
                   )
                 }
-                className="w-full border border-gray-200 rounded-2xl p-4 outline-none"
+                className="w-full border border-luxury-border rounded-2xl p-4 outline-none"
               >
 
                 <option value="text">
@@ -242,13 +222,13 @@ const ResumeAnalyzer = () => {
 
               <div className="mb-8">
 
-                <label className="block text-lg font-semibold text-gray-700 mb-3">
+                <label className="block text-lg font-semibold text-luxury-ink mb-3">
                   Paste Job Description
                 </label>
 
                 <textarea
                   placeholder="Paste job description here..."
-                  className="w-full border border-gray-200 rounded-3xl p-5 h-64 text-gray-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
+                  className="w-full border border-luxury-border rounded-3xl p-5 h-64 text-luxury-ink focus:border-luxury-accent focus:ring-2 focus:ring-luxury-accent/20 outline-none"
                   value={jobDescription}
                   onChange={(e) =>
                     setJobDescription(
@@ -266,7 +246,7 @@ const ResumeAnalyzer = () => {
 
               <div className="mb-8">
 
-                <label className="flex items-center justify-center w-full border-2 border-dashed border-purple-300 bg-purple-50 hover:bg-purple-100 transition rounded-3xl p-8 cursor-pointer">
+                <label className="flex items-center justify-center w-full border-2 border-dashed border-luxury-accent/40 bg-luxury-muted hover:bg-luxury-muted transition rounded-3xl p-8 cursor-pointer">
 
                   <input
                     type="file"
@@ -276,11 +256,11 @@ const ResumeAnalyzer = () => {
 
                   <div className="text-center">
 
-                    <p className="text-purple-600 font-semibold text-xl">
+                    <p className="text-luxury-accent font-semibold text-xl">
                       Upload JD PDF
                     </p>
 
-                    <p className="text-gray-500 mt-2">
+                    <p className="text-luxury-body mt-2">
                       PDF only
                     </p>
 
@@ -298,11 +278,11 @@ const ResumeAnalyzer = () => {
                 handleAnalyze
               }
               disabled={loading}
-              className={`w-full py-5 rounded-3xl font-semibold text-lg shadow-md flex items-center justify-center gap-3 transition-all duration-300
+              className={`w-full py-5 rounded-3xl font-semibold text-lg shadow-soft flex items-center justify-center gap-3 transition-all duration-300
 
               ${loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-500 to-indigo-500 hover:scale-[1.02] text-white"
+                ? "bg-luxury-caption cursor-not-allowed"
+                : "bg-gradient-to-r from-luxury-accent to-luxury-accent-hover hover:scale-[1.02] text-luxury-on-accent"
               }`}
             >
 
@@ -321,9 +301,9 @@ const ResumeAnalyzer = () => {
           </div>
 
           {/* RIGHT PANEL */}
-          <div className="bg-white p-8 rounded-[32px] shadow-lg border border-gray-100">
+          <div className="bg-luxury-surface p-8 rounded-[32px] shadow-lg border border-luxury-border">
 
-            <h2 className="text-4xl font-bold mb-8 text-gray-800">
+            <h2 className="text-4xl font-bold mb-8 text-luxury-ink">
               Analysis Result
             </h2>
 
@@ -335,11 +315,11 @@ const ResumeAnalyzer = () => {
                   📄
                 </div>
 
-                <h3 className="text-3xl font-bold text-gray-700 mb-3">
+                <h3 className="text-3xl font-bold text-luxury-ink mb-3">
                   No Resume Analysis Yet
                 </h3>
 
-                <p className="text-gray-500 text-lg max-w-sm">
+                <p className="text-luxury-body text-lg max-w-sm">
                   Upload a resume and job description to begin AI analysis
                 </p>
 
@@ -352,25 +332,25 @@ const ResumeAnalyzer = () => {
                 {/* SCORES */}
                 <div className="grid grid-cols-2 gap-5">
 
-                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-3xl">
+                  <div className="bg-gradient-to-r from-luxury-muted to-luxury-muted p-6 rounded-3xl">
 
-                    <p className="text-gray-500 mb-2">
+                    <p className="text-luxury-body mb-2">
                       ATS Score
                     </p>
 
-                    <h3 className="text-5xl font-bold text-blue-500">
+                    <h3 className="text-5xl font-bold text-luxury-accent">
                       {result.atsScore}%
                     </h3>
 
                   </div>
 
-                  <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-3xl">
+                  <div className="bg-gradient-to-r from-luxury-muted to-luxury-muted p-6 rounded-3xl">
 
-                    <p className="text-gray-500 mb-2">
+                    <p className="text-luxury-body mb-2">
                       Match Score
                     </p>
 
-                    <h3 className="text-5xl font-bold text-green-500">
+                    <h3 className="text-5xl font-bold text-luxury-accent">
                       {result.matchScore}%
                     </h3>
 
@@ -385,7 +365,7 @@ const ResumeAnalyzer = () => {
                     ATS Breakdown
                   </h3>
 
-                  <ul className="space-y-2 text-gray-700">
+                  <ul className="space-y-2 text-luxury-ink">
 
                     {result.atsBreakdown?.map(
                       (
@@ -405,7 +385,7 @@ const ResumeAnalyzer = () => {
                 {/* MATCHED */}
                 <div>
 
-                  <h3 className="text-2xl font-bold text-green-600 mb-4">
+                  <h3 className="text-2xl font-bold text-luxury-accent mb-4">
                     Matched Skills
                   </h3>
 
@@ -419,7 +399,7 @@ const ResumeAnalyzer = () => {
                         <SkillBadge
                           key={index}
                           skill={skill}
-                          color="bg-green-100 text-green-700"
+                          color="bg-luxury-muted text-luxury-accent"
                         />
                       )
                     )}
@@ -431,7 +411,7 @@ const ResumeAnalyzer = () => {
                 {/* MISSING */}
                 <div>
 
-                  <h3 className="text-2xl font-bold text-red-500 mb-4">
+                  <h3 className="text-2xl font-bold text-luxury-coral mb-4">
                     Missing Skills
                   </h3>
 
@@ -445,7 +425,7 @@ const ResumeAnalyzer = () => {
                         <SkillBadge
                           key={index}
                           skill={skill}
-                          color="bg-red-100 text-red-700"
+                          color="bg-luxury-muted text-luxury-coral"
                         />
                       )
                     )}
@@ -455,13 +435,13 @@ const ResumeAnalyzer = () => {
                 </div>
 
                 {/* WEAKNESSES */}
-                <div className="bg-purple-50 rounded-3xl p-6">
+                <div className="bg-luxury-muted rounded-3xl p-6">
 
-                  <h3 className="text-2xl font-bold text-purple-600 mb-4">
+                  <h3 className="text-2xl font-bold text-luxury-accent mb-4">
                     Resume Weaknesses
                   </h3>
 
-                  <ul className="space-y-3 text-gray-700">
+                  <ul className="space-y-3 text-luxury-ink">
 
                     {result.weaknesses
                       ?.slice(0, 4)
@@ -483,18 +463,18 @@ const ResumeAnalyzer = () => {
                 {/* AI ANALYSIS */}
                 <div className="space-y-5">
 
-                  <h3 className="text-3xl font-bold text-blue-600">
+                  <h3 className="text-3xl font-bold text-luxury-accent">
                     AI Career Analysis
                   </h3>
 
                   {/* SUMMARY */}
-                  <div className="bg-blue-50 rounded-3xl p-6">
+                  <div className="bg-luxury-muted rounded-3xl p-6">
 
-                    <h4 className="font-bold text-blue-700 mb-3 text-xl">
+                    <h4 className="font-bold text-luxury-accent mb-3 text-xl">
                       Professional Summary
                     </h4>
 
-                    <p className="text-gray-700 leading-8">
+                    <p className="text-luxury-ink leading-8">
                       {
                         result.aiAnalysis?.professionalSummary
                           ?.replace(/\*\*/g, "")
@@ -507,9 +487,9 @@ const ResumeAnalyzer = () => {
                   </div>
 
                   {/* STRENGTHS */}
-                  <div className="bg-green-50 rounded-3xl p-6">
+                  <div className="bg-luxury-muted rounded-3xl p-6">
 
-                    <h4 className="font-bold text-green-700 mb-4 text-xl">
+                    <h4 className="font-bold text-luxury-accent mb-4 text-xl">
                       Strengths
                     </h4>
 
@@ -525,7 +505,7 @@ const ResumeAnalyzer = () => {
 
                             <div
                               key={index}
-                              className="bg-white px-4 py-3 rounded-full text-sm text-green-700 border border-green-200"
+                              className="bg-luxury-surface px-4 py-3 rounded-full text-sm text-luxury-accent border border-luxury-accent/30"
                             >
                               {item.replace(/\*\*/g, "")}
                             </div>
@@ -538,9 +518,9 @@ const ResumeAnalyzer = () => {
                   </div>
 
                   {/* IMPROVEMENTS */}
-                  <div className="bg-red-50 rounded-3xl p-6">
+                  <div className="bg-luxury-muted rounded-3xl p-6">
 
-                    <h4 className="font-bold text-red-700 mb-4 text-xl">
+                    <h4 className="font-bold text-luxury-coral mb-4 text-xl">
                       Improvements
                     </h4>
 
@@ -556,7 +536,7 @@ const ResumeAnalyzer = () => {
 
                             <div
                               key={index}
-                              className="bg-white p-4 rounded-2xl border border-red-100 text-gray-700"
+                              className="bg-luxury-surface p-4 rounded-2xl border border-luxury-coral/30 text-luxury-ink"
                             >
                               • {item.replace(/\*\*/g, "")}
                             </div>
@@ -569,13 +549,13 @@ const ResumeAnalyzer = () => {
                   </div>
 
                   {/* FINAL */}
-                  <div className="bg-yellow-50 rounded-3xl p-6">
+                  <div className="bg-luxury-muted rounded-3xl p-6">
 
-                    <h4 className="font-bold text-yellow-700 mb-3 text-xl">
+                    <h4 className="font-bold text-luxury-sun mb-3 text-xl">
                       Final AI Advice
                     </h4>
 
-                    <p className="text-gray-700 leading-8">
+                    <p className="text-luxury-ink leading-8">
                       {
                         result.aiAnalysis?.finalAdvice
                           ?.replace(/\*\*/g, "")

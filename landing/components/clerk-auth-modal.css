@@ -1,0 +1,56 @@
+.clerk-auth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  pointer-events: none;
+}
+
+.clerk-auth-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.clerk-auth-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 28rem;
+  pointer-events: auto;
+}
+
+.clerk-auth-modal__close {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  border: none;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.2s;
+}
+
+.clerk-auth-modal__close:hover {
+  opacity: 0.85;
+}
+
+.clerk-auth-modal__card {
+  width: 100%;
+}

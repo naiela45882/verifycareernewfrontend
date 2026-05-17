@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import axios from "axios";
-import Navbar from "./Navbar";
+import React, { useEffect, useState } from "react";
+import { API_URL } from "./lib/api";
 
 const CommunityForum = () => {
 
@@ -23,40 +22,26 @@ const CommunityForum = () => {
   const [errorPopup, setErrorPopup] =
     useState(false);
 
-  const [posts, setPosts] = useState([
-    {
-      title: "Fake Internship at XYZ Company",
-      category: "Internship Scam",
-      severity: "High Risk",
-      user: "Anonymous User",
-      time: "2 hours ago",
-      helpful: 34,
-      content:
-        "The recruiter asked me to pay a registration fee before the interview process. Communication was only through Telegram.",
-    },
+  const [posts, setPosts] = useState([]);
 
-    {
-      title: "Suspicious Work From Home Offer",
-      category: "Job Offer Scam",
-      severity: "Medium Risk",
-      user: "Sarah K",
-      time: "5 hours ago",
-      helpful: 19,
-      content:
-        "Received an email promising ₹80,000/month for simple typing work. No official company website was provided.",
-    },
-
-    {
-      title: "Fake HR Asking for Documents",
-      category: "Identity Scam",
-      severity: "High Risk",
-      user: "Rahul",
-      time: "1 day ago",
-      helpful: 42,
-      content:
-        "The recruiter requested Aadhaar and bank details before any interview. Please stay careful.",
-    },
-  ]);
+  useEffect(() => {
+    fetch(`${API_URL}/api/community/all`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setPosts(
+            data.map((p) => ({
+              ...p,
+              time: p.createdAt
+                ? new Date(p.createdAt).toLocaleDateString()
+                : "Recently",
+              user: p.anonymous ? "Anonymous User" : p.user || "Community member",
+            }))
+          );
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const handleSubmit = async () => {
 
@@ -68,21 +53,23 @@ const CommunityForum = () => {
 
       setLoading(true);
 
-      const response =
-        await axios.post(
-          "https://verifycareers-backend.onrender.com/api/community/create",
-          {
-            title,
-            category,
-            content: experience,
-            anonymous,
-          }
-        );
+      const response = await fetch(`${API_URL}/api/community/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          category,
+          content: experience,
+          anonymous,
+        }),
+      });
+      const created = await response.json();
 
       setPosts((prev) => [
         {
-          ...response.data,
+          ...created,
           time: "Just now",
+          user: anonymous ? "Anonymous User" : "You",
         },
         ...prev,
       ]);
@@ -115,18 +102,14 @@ const CommunityForum = () => {
 
   return (
     <>
-      <Navbar />
-
-      <div className="min-h-screen bg-[#f6f8fc] p-6 lg:p-10">
-
-        <div className="max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl">
 
           {/* PAGE HEADER */}
           <div className="mb-10">
 
             <div className="flex items-center gap-4 mb-4">
 
-              <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-3xl shadow-lg">
+              <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-luxury-accent to-luxury-accent-hover flex items-center justify-center text-luxury-on-accent text-3xl shadow-lg">
 
                 👥
 
@@ -134,13 +117,13 @@ const CommunityForum = () => {
 
               <div>
 
-                <h1 className="text-5xl font-bold text-[#111827]">
+                <h1 className="text-5xl font-bold text-luxury-ink">
 
                   Community Forum
 
                 </h1>
 
-                <p className="text-gray-500 text-lg mt-1">
+                <p className="text-luxury-body text-lg mt-1">
 
                   Share scam experiences and help others stay protected
 
@@ -156,14 +139,14 @@ const CommunityForum = () => {
           <div className="grid lg:grid-cols-[380px_1fr] gap-8 items-start">
 
             {/* LEFT PANEL */}
-            <div className="bg-white rounded-[28px] shadow-md border border-gray-100 p-6 sticky top-24">
+            <div className="bg-luxury-surface rounded-[28px] shadow-soft border border-luxury-border p-6 sticky top-24">
 
               {/* HEADER */}
               <div className="mb-6">
 
                 <div className="flex items-center gap-3 mb-3">
 
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-xl shadow-md">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-luxury-coral to-luxury-accent flex items-center justify-center text-luxury-on-accent text-xl shadow-soft">
 
                     ✍
 
@@ -171,13 +154,13 @@ const CommunityForum = () => {
 
                   <div>
 
-                    <h2 className="text-2xl font-bold text-[#111827]">
+                    <h2 className="text-2xl font-bold text-luxury-ink">
 
                       Share Experience
 
                     </h2>
 
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-luxury-body text-sm">
 
                       Help the community stay safe
 
@@ -192,7 +175,7 @@ const CommunityForum = () => {
               {/* TITLE */}
               <div className="mb-5">
 
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-luxury-ink mb-2">
 
                   Post Title
 
@@ -205,7 +188,7 @@ const CommunityForum = () => {
                     setTitle(e.target.value)
                   }
                   placeholder="Enter a short title..."
-                  className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-purple-500 transition"
+                  className="w-full border-2 border-luxury-border rounded-2xl px-4 py-3 outline-none focus:border-luxury-accent transition"
                 />
 
               </div>
@@ -213,7 +196,7 @@ const CommunityForum = () => {
               {/* CATEGORY */}
               <div className="mb-5">
 
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-luxury-ink mb-2">
 
                   Scam Category
 
@@ -224,7 +207,7 @@ const CommunityForum = () => {
                   onChange={(e) =>
                     setCategory(e.target.value)
                   }
-                  className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-purple-500 transition bg-white"
+                  className="w-full border-2 border-luxury-border rounded-2xl px-4 py-3 outline-none focus:border-luxury-accent transition bg-luxury-surface"
                 >
 
                   <option>
@@ -254,7 +237,7 @@ const CommunityForum = () => {
               {/* DESCRIPTION */}
               <div className="mb-5">
 
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-luxury-ink mb-2">
 
                   Your Experience
 
@@ -266,23 +249,23 @@ const CommunityForum = () => {
                     setExperience(e.target.value)
                   }
                   placeholder="Describe what happened..."
-                  className="w-full h-[180px] border-2 border-gray-200 rounded-3xl p-4 outline-none resize-none focus:border-purple-500 transition"
+                  className="w-full h-[180px] border-2 border-luxury-border rounded-3xl p-4 outline-none resize-none focus:border-luxury-accent transition"
                 />
 
               </div>
 
               {/* TOGGLE */}
-              <div className="flex items-center justify-between bg-[#f8f9ff] border border-[#e3e8ff] rounded-2xl px-4 py-3 mb-6">
+              <div className="flex items-center justify-between bg-luxury-muted border border-luxury-border rounded-2xl px-4 py-3 mb-6">
 
                 <div>
 
-                  <h3 className="font-semibold text-[#111827]">
+                  <h3 className="font-semibold text-luxury-ink">
 
                     Post Anonymously
 
                   </h3>
 
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-luxury-body">
 
                     Hide your identity from others
 
@@ -296,7 +279,7 @@ const CommunityForum = () => {
                   onChange={(e) =>
                     setAnonymous(e.target.checked)
                   }
-                  className="w-5 h-5 accent-purple-600"
+                  className="w-5 h-5 accent-luxury-accent"
                 />
 
               </div>
@@ -316,10 +299,10 @@ const CommunityForum = () => {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className={`w-full py-3.5 rounded-2xl text-white text-lg font-semibold shadow-lg transition ${
+                className={`w-full py-3.5 rounded-2xl text-luxury-on-accent text-lg font-semibold shadow-lg transition ${
                   loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:scale-[1.02]"
+                    ? "bg-luxury-caption cursor-not-allowed"
+                    : "bg-gradient-to-r from-luxury-accent to-luxury-accent-hover hover:scale-[1.02]"
                 }`}
               >
 
@@ -347,17 +330,17 @@ const CommunityForum = () => {
             <div>
 
               {/* TRENDING */}
-              <div className="bg-white rounded-[28px] shadow-md border border-gray-100 p-6 mb-8">
+              <div className="bg-luxury-surface rounded-[28px] shadow-soft border border-luxury-border p-6 mb-8">
 
                 <div className="flex items-center justify-between mb-5">
 
-                  <h2 className="text-2xl font-bold text-[#111827]">
+                  <h2 className="text-2xl font-bold text-luxury-ink">
 
                     Trending Scam Types
 
                   </h2>
 
-                  <span className="text-sm text-purple-500 font-semibold">
+                  <span className="text-sm text-luxury-accent font-semibold">
 
                     Live Community Alerts
 
@@ -367,7 +350,7 @@ const CommunityForum = () => {
 
                 <div className="flex flex-wrap gap-3">
 
-                  <div className="px-4 py-2 rounded-full bg-red-100 text-red-600 font-medium">
+                  <div className="px-4 py-2 rounded-full bg-luxury-muted text-luxury-coral font-medium">
 
                     Telegram HR Scam
 
@@ -379,13 +362,13 @@ const CommunityForum = () => {
 
                   </div>
 
-                  <div className="px-4 py-2 rounded-full bg-blue-100 text-blue-600 font-medium">
+                  <div className="px-4 py-2 rounded-full bg-luxury-muted text-luxury-accent font-medium">
 
                     Fake Internship
 
                   </div>
 
-                  <div className="px-4 py-2 rounded-full bg-purple-100 text-purple-600 font-medium">
+                  <div className="px-4 py-2 rounded-full bg-luxury-muted text-luxury-accent font-medium">
 
                     Crypto Salary Scam
 
@@ -402,7 +385,7 @@ const CommunityForum = () => {
 
                   <div
                     key={index}
-                    className="bg-white rounded-[28px] shadow-md border border-gray-100 p-6 hover:shadow-xl transition duration-300"
+                    className="bg-luxury-surface rounded-[28px] shadow-soft border border-luxury-border p-6 hover:shadow-xl transition duration-300"
                   >
 
                     {/* TOP */}
@@ -412,13 +395,13 @@ const CommunityForum = () => {
 
                         <div className="flex flex-wrap gap-3 mb-3">
 
-                          <div className="px-3 py-1 rounded-full bg-purple-100 text-purple-600 text-sm font-medium">
+                          <div className="px-3 py-1 rounded-full bg-luxury-muted text-luxury-accent text-sm font-medium">
 
                             {post.category}
 
                           </div>
 
-                          <div className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-sm font-medium">
+                          <div className="px-3 py-1 rounded-full bg-luxury-muted text-luxury-coral text-sm font-medium">
 
                             {post.severity || "Medium Risk"}
 
@@ -426,17 +409,17 @@ const CommunityForum = () => {
 
                         </div>
 
-                        <h2 className="text-2xl font-bold text-[#111827] mb-2">
+                        <h2 className="text-2xl font-bold text-luxury-ink mb-2">
 
                           {post.title}
 
                         </h2>
 
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-luxury-body text-sm">
 
                           Posted by{" "}
 
-                          <span className="font-semibold text-gray-700">
+                          <span className="font-semibold text-luxury-ink">
 
                             {post.user || "Anonymous User"}
 
@@ -450,7 +433,7 @@ const CommunityForum = () => {
 
                       </div>
 
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-2xl shadow-md">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-luxury-coral to-luxury-accent flex items-center justify-center text-luxury-on-accent text-2xl shadow-soft">
 
                         🚨
 
@@ -459,9 +442,9 @@ const CommunityForum = () => {
                     </div>
 
                     {/* CONTENT */}
-                    <div className="bg-[#f8f9ff] rounded-2xl p-5 border border-[#e9edff] mb-5">
+                    <div className="bg-luxury-muted rounded-2xl p-5 border border-luxury-border mb-5">
 
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-luxury-ink leading-relaxed">
 
                         {post.content}
 
@@ -472,13 +455,13 @@ const CommunityForum = () => {
                     {/* ACTIONS */}
                     <div className="flex items-center justify-between">
 
-                      <button className="px-5 py-2.5 rounded-xl bg-[#f3f4ff] hover:bg-[#e7e9ff] text-purple-700 font-medium transition">
+                      <button className="px-5 py-2.5 rounded-xl bg-luxury-muted hover:bg-luxury-border text-luxury-accent font-medium transition">
 
                         👍 Helpful ({post.helpful || 0})
 
                       </button>
 
-                      <button className="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition">
+                      <button className="px-5 py-2.5 rounded-xl bg-luxury-coral hover:bg-luxury-coral text-luxury-on-accent font-medium transition">
 
                         Report Post
 
@@ -496,17 +479,15 @@ const CommunityForum = () => {
 
           </div>
 
-        </div>
-
-      </div>
+    </div>
 
       {/* SUCCESS POPUP */}
       {successPopup && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
-          <div className="bg-white rounded-[32px] p-8 w-[340px] shadow-2xl text-center">
+          <div className="bg-luxury-surface rounded-[32px] p-8 w-[340px] shadow-2xl text-center">
 
-            <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-5">
+            <div className="w-20 h-20 rounded-full bg-luxury-muted flex items-center justify-center mx-auto mb-5">
 
               <span className="text-4xl">
                 ✅
@@ -514,13 +495,13 @@ const CommunityForum = () => {
 
             </div>
 
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            <h2 className="text-3xl font-bold text-luxury-ink mb-2">
 
               Report Submitted
 
             </h2>
 
-            <p className="text-gray-500 leading-relaxed">
+            <p className="text-luxury-body leading-relaxed">
 
               Your scam report has been shared with the community.
 
@@ -535,9 +516,9 @@ const CommunityForum = () => {
       {errorPopup && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
-          <div className="bg-white rounded-[32px] p-8 w-[340px] shadow-2xl text-center">
+          <div className="bg-luxury-surface rounded-[32px] p-8 w-[340px] shadow-2xl text-center">
 
-            <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-5">
+            <div className="w-20 h-20 rounded-full bg-luxury-muted flex items-center justify-center mx-auto mb-5">
 
               <span className="text-4xl">
                 ❌
@@ -545,13 +526,13 @@ const CommunityForum = () => {
 
             </div>
 
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            <h2 className="text-3xl font-bold text-luxury-ink mb-2">
 
               Submission Failed
 
             </h2>
 
-            <p className="text-gray-500 leading-relaxed">
+            <p className="text-luxury-body leading-relaxed">
 
               Please try again later.
 

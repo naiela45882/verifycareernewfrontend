@@ -1,0 +1,270 @@
+/* Civic Signal palette — applied via html[data-theme] */
+
+:root,
+:root[data-theme="harbor"] {
+  color-scheme: light;
+
+  --ink: #0e1a22;
+  --ink-soft: #33434f;
+  --sand: #eef4f6;
+  --paper: #f7fbff;
+  --stone: #d5e1e8;
+  --surface-muted: #e6f0f5;
+  --sage: #cfe8e3;
+  --teal: #1a768c;
+  --coral: #ff7a59;
+  --sun: #f5ce6b;
+  --grid-line: rgba(14, 26, 34, 0.08);
+  --noise-a: rgba(255, 255, 255, 0.3);
+  --noise-b: rgba(26, 118, 140, 0.2);
+  --noise-c: rgba(245, 206, 107, 0.2);
+  --shadow-deep: 0 28px 70px rgba(14, 26, 34, 0.18);
+  --shadow-soft: 0 16px 40px rgba(14, 26, 34, 0.12);
+  --gradient-headline: linear-gradient(120deg, var(--teal), var(--sun), var(--coral));
+  --gradient-intro-bar: linear-gradient(90deg, var(--teal), var(--sun), var(--coral));
+  --gradient-how-section: linear-gradient(140deg, var(--paper), var(--surface-muted));
+  --glow-teal: color-mix(in srgb, var(--teal) 40%, transparent);
+  --glow-sun: color-mix(in srgb, var(--sun) 50%, transparent);
+  --glow-coral: color-mix(in srgb, var(--coral) 35%, transparent);
+
+  --vc-ink: var(--ink);
+  --vc-teal: var(--teal);
+  --vc-teal-hover: #156074;
+  --vc-sun: var(--sun);
+  --vc-coral: var(--coral);
+  --vc-paper: var(--paper);
+  --vc-body: var(--ink-soft);
+  --vc-caption: #5c6d7a;
+  --vc-border: var(--stone);
+  --vc-muted: var(--surface-muted);
+  --vc-surface: var(--paper);
+  --vc-nav-bg: rgba(247, 251, 255, 0.95);
+  --vc-shadow: rgba(14, 26, 34, 0.06);
+  --vc-ambient: rgba(26, 118, 140, 0.07);
+  --vc-on-accent: #ffffff;
+  --vc-overlay: rgba(14, 26, 34, 0.45);
+  --vc-input-bg: #ffffff;
+}
+
+:root[data-theme="midnight"] {
+  color-scheme: dark;
+
+  --ink: #eef4f8;
+  --ink-soft: #9aadb8;
+  --sand: #0d1419;
+  --paper: #141c24;
+  --stone: #2a3844;
+  --surface-muted: #111a22;
+  --sage: #1e3d4a;
+  --teal: #4a9cad;
+  --coral: #ff9478;
+  --sun: #e8c66a;
+  --grid-line: rgba(238, 244, 248, 0.07);
+  --noise-a: rgba(74, 156, 173, 0.14);
+  --noise-b: rgba(26, 118, 140, 0.12);
+  --noise-c: rgba(232, 198, 106, 0.1);
+  --shadow-deep: 0 28px 70px rgba(8, 16, 24, 0.55);
+  --shadow-soft: 0 16px 40px rgba(8, 16, 24, 0.38);
+  --gradient-headline: linear-gradient(
+    120deg,
+    var(--teal),
+    color-mix(in srgb, var(--sun) 70%, var(--teal))
+  );
+  --gradient-intro-bar: linear-gradient(
+    90deg,
+    var(--teal),
+    color-mix(in srgb, var(--sun) 70%, var(--teal))
+  );
+  --gradient-how-section: linear-gradient(140deg, var(--paper), var(--surface-muted));
+  --glow-teal: color-mix(in srgb, var(--teal) 38%, transparent);
+  --glow-sun: color-mix(in srgb, var(--sun) 42%, transparent);
+  --glow-coral: color-mix(in srgb, var(--coral) 28%, transparent);
+
+  --vc-ink: var(--ink);
+  --vc-teal: var(--teal);
+  --vc-teal-hover: #3d8a9a;
+  --vc-sun: var(--sun);
+  --vc-coral: var(--coral);
+  --vc-paper: var(--paper);
+  --vc-body: var(--ink-soft);
+  --vc-caption: #6d7f8c;
+  --vc-border: var(--stone);
+  --vc-muted: var(--surface-muted);
+  --vc-surface: #161f28;
+  --vc-nav-bg: rgba(20, 28, 36, 0.92);
+  --vc-shadow: rgba(0, 0, 0, 0.22);
+  --vc-ambient: rgba(74, 156, 173, 0.1);
+  --vc-on-accent: #ffffff;
+  --vc-overlay: rgba(8, 14, 20, 0.62);
+  --vc-input-bg: #161f28;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--sand);
+  color: var(--ink);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.surface-card {
+  background: var(--paper);
+  border: 1px solid var(--stone);
+  box-shadow: var(--shadow-soft);
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+:root[data-theme="midnight"] .surface-card {
+  border-color: color-mix(in srgb, white 8%, var(--stone));
+  box-shadow: var(--shadow-soft), inset 0 1px 0 color-mix(in srgb, white 5%, transparent);
+}
+
+.surface-muted {
+  background: var(--surface-muted);
+  border: 1px solid var(--stone);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.app-page {
+  min-height: 100vh;
+  background: var(--sand);
+  color: var(--ink);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.app-input {
+  background-color: var(--vc-input-bg);
+  border: 1px solid var(--stone);
+  color: var(--ink);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.app-input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 18%, transparent);
+}
+
+.app-btn-primary {
+  background-color: var(--teal);
+  color: var(--vc-on-accent);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.app-btn-primary:hover:not(:disabled) {
+  background-color: var(--vc-teal-hover);
+}
+
+.app-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.app-btn-risk {
+  background: linear-gradient(
+    135deg,
+    var(--coral) 0%,
+    color-mix(in srgb, var(--sun) 70%, var(--coral)) 100%
+  );
+  color: var(--vc-on-accent);
+}
+
+.app-btn-secondary {
+  background-color: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--stone);
+}
+
+.theme-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--stone);
+  flex-shrink: 0;
+}
+
+.nav-underline {
+  position: relative;
+}
+
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--teal);
+  transition: width 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.nav-underline:hover::after,
+.nav-underline.is-active::after {
+  width: 100%;
+}
+
+.section-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--stone) 20%,
+    var(--stone) 80%,
+    transparent
+  );
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ink-soft) 55%, var(--stone));
+  border-radius: 999px;
+  border: 2px solid var(--surface-muted);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--teal) 40%, var(--stone));
+}
+
+/* Resume builder — document preview stays print-white in every app theme */
+.resume-preview-paper {
+  background: #ffffff;
+  color: #111827;
+  color-scheme: light;
+}
+
+/* Builder live preview — page height follows content, not full A4 sheet */
+.resume-preview-paper.min-h-0 {
+  min-height: 0;
+}
+
+.resume-preview-paper .resume-preview-muted {
+  color: #4b5563;
+}
+
+.resume-preview-paper .resume-preview-heading {
+  color: #1f2937;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

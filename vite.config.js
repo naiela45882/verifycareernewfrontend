@@ -4,9 +4,28 @@ import react from "@vitejs/plugin-react";
 
 import { VitePWA } from "vite-plugin-pwa";
 
+function faviconFallback() {
+  return {
+    name: "favicon-fallback",
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url === "/favicon.ico") {
+          res.statusCode = 302;
+          res.setHeader("Location", "/favicon.svg");
+          res.end();
+          return;
+        }
+        next();
+      });
+    },
+  };
+}
+
 export default defineConfig({
 
   plugins: [
+
+    faviconFallback(),
 
     react(),
 
@@ -14,6 +33,10 @@ export default defineConfig({
 
       registerType:
         "autoUpdate",
+
+      workbox: {
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+      },
 
       includeAssets: [
         "favicon.svg",
