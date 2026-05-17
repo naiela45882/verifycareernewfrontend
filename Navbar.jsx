@@ -1,7 +1,7 @@
 import React from "react";
 import { useClerk } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
-import ThemeSwitcher from "./components/ThemeSwitcher";
+import ThemeAndPwaControls from "./components/ThemeAndPwaControls";
 
 const Navbar = () => {
   const { signOut } = useClerk();
@@ -40,7 +40,7 @@ const Navbar = () => {
           </Link>
         </li>
         <li>
-          <ThemeSwitcher />
+          <ThemeAndPwaControls />
         </li>
         <li>
           <button
@@ -54,7 +54,7 @@ const Navbar = () => {
       </ul>
 
       <div className="flex md:hidden items-center gap-1">
-        <ThemeSwitcher />
+        <ThemeAndPwaControls />
       </div>
     </nav>
   );

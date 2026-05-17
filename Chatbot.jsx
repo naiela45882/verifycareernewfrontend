@@ -41,8 +41,7 @@ const Chatbot = () => {
       // 🤖 BACKEND AI CALL
       // ======================================
       const res = await fetch(
-        "https://verifycareers-backend.onrender.com",
-      
+        `${import.meta.env.VITE_API_URL || "http://localhost:5001"}/api/chatbot/ask`,
         {
           method: "POST",
 

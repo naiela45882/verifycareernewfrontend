@@ -6,7 +6,8 @@ import { Menu, X } from "lucide-react";
 import LandingNavLink from "./LandingNavLink";
 import CompassNeedle from "./CompassNeedle";
 import LandingThemePills from "./LandingThemePills";
-import ThemeSwitcher from "../../components/ThemeSwitcher";
+import PwaInstallButton from "../../components/PwaInstallButton";
+import ThemeAndPwaControls from "../../components/ThemeAndPwaControls";
 import { useNeedleScroll } from "../context/NeedleScrollContext";
 import "./landing-navbar.css";
 
@@ -46,15 +47,16 @@ export default function LandingNavbar() {
           </nav>
         </div>
 
-        <motion.div className="landing-navbar__actions">
-          <div className="hidden lg:block">
+        <div className="landing-navbar__actions">
+          <div className="hidden lg:flex items-center gap-2">
             <LandingThemePills />
+            <PwaInstallButton variant="landing" />
           </div>
           <AuthTrigger mode="sign-in" className="landing-navbar__cta hidden sm:inline-flex">
             Sign in
           </AuthTrigger>
           <div className="lg:hidden">
-            <ThemeSwitcher variant="landing" />
+            <ThemeAndPwaControls variant="landing" />
           </div>
           <button
             type="button"
@@ -65,7 +67,7 @@ export default function LandingNavbar() {
           >
             {mobileOpen ? <X size={18} strokeWidth={1.5} /> : <Menu size={18} strokeWidth={1.5} />}
           </button>
-        </motion.div>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -99,6 +101,7 @@ export default function LandingNavbar() {
               </AuthTrigger>
               <div className="landing-navbar__drawer-themes">
                 <LandingThemePills className="!flex" />
+                <PwaInstallButton variant="landing" className="mt-3" />
               </div>
             </div>
           </motion.div>

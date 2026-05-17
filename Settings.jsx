@@ -11,7 +11,7 @@ import {
   Target,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import ThemeSwitcher from "./components/ThemeSwitcher";
+import ThemeAndPwaControls from "./components/ThemeAndPwaControls";
 import HelpChatPanel from "./components/settings/HelpChatPanel";
 import SettingsFaqs from "./components/settings/SettingsFaqs";
 import SettingsContact from "./components/settings/SettingsContact";
@@ -210,7 +210,14 @@ export default function Settings() {
             </div>
           )}
 
-          {activeId === "appearance" && <ThemeSwitcher />}
+          {activeId === "appearance" && (
+            <div className="space-y-4">
+              <ThemeAndPwaControls />
+              <p className="text-[12px] text-luxury-caption">
+                Install VerifyCareers as an app for quick access from your home screen or dock.
+              </p>
+            </div>
+          )}
 
           {activeId === "faqs" && <SettingsFaqs />}
 

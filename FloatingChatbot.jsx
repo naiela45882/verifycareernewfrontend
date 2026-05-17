@@ -39,7 +39,7 @@ const FloatingChatbot = () => {
     try {
 
       const res = await fetch(
-        "https://verifycareers-backend.onrender.com/api/chatbot/ask",
+        `${import.meta.env.VITE_API_URL || "http://localhost:5001"}/api/chatbot/ask`,
         {
           method: "POST",
 

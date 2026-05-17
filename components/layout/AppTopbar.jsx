@@ -15,6 +15,7 @@ import { getPageMeta } from "./sidebar/sidebarConfig";
 import { useLoginTimer } from "../../hooks/useLoginTimer";
 import { useDashboardData } from "../../hooks/useDashboardData";
 import HelpChatbotModal from "./HelpChatbotModal";
+import ThemeAndPwaControls from "../ThemeAndPwaControls";
 
 function getTimeGreeting() {
   const hour = new Date().getHours();
@@ -100,6 +101,7 @@ export default function AppTopbar() {
         </div>
 
         <div className="flex items-center gap-0.5">
+          <ThemeAndPwaControls className="mr-1 hidden sm:flex" />
           <div ref={notificationsRef} className="relative">
             <button
               type="button"

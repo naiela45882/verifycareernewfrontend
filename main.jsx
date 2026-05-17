@@ -4,8 +4,11 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import App from "./App";
 import "./index.css";
 import { ThemeProvider } from "./theme/ThemeContext";
+import { registerSW } from "virtual:pwa-register";
 
 import { Toaster } from "react-hot-toast";
+
+registerSW({ immediate: true });
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
