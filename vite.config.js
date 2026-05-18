@@ -48,65 +48,41 @@ export default defineConfig(({ mode }) => {
   assertProductionApiUrl(mode, env);
 
   return {
-  plugins: [
-
-    faviconFallback(),
-
-    react(),
-
-    VitePWA({
-
-      registerType:
-        "autoUpdate",
-
-      workbox: {
-        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
-      },
-
-      includeAssets: [
-        "favicon.svg",
-      ],
-
-      manifest: {
-
-        name:
-          "VerifyCareers AI",
-
-        short_name:
-          "VerifyCareers",
-
-        description:
-          "AI-powered career scam detection and resume intelligence platform",
-
-        theme_color:
-          "#2563eb",
-
-        background_color:
-          "#ffffff",
-
-        display:
-          "standalone",
-
-        scope: "/",
-
-        start_url: "/",
-
-        icons: [
-          {
-            src: "/favicon.svg",
-            sizes: "any",
-            type: "image/svg+xml",
-            purpose: "any",
-          },
-          {
-            src: "/favicon.svg",
-            sizes: "any",
-            type: "image/svg+xml",
-            purpose: "maskable",
-          },
-        ],
-      },
-    }),
-  ],
-};
+    plugins: [
+      faviconFallback(),
+      react(),
+      VitePWA({
+        registerType: "autoUpdate",
+        workbox: {
+          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        },
+        includeAssets: ["favicon.svg"],
+        manifest: {
+          name: "VerifyCareers AI",
+          short_name: "VerifyCareers",
+          description:
+            "AI-powered career scam detection and resume intelligence platform",
+          theme_color: "#2563eb",
+          background_color: "#ffffff",
+          display: "standalone",
+          scope: "/",
+          start_url: "/",
+          icons: [
+            {
+              src: "/favicon.svg",
+              sizes: "any",
+              type: "image/svg+xml",
+              purpose: "any",
+            },
+            {
+              src: "/favicon.svg",
+              sizes: "any",
+              type: "image/svg+xml",
+              purpose: "maskable",
+            },
+          ],
+        },
+      }),
+    ],
+  };
 });
