@@ -7,7 +7,6 @@ import SkillsSection from "./SkillsSection";
 import ProjectsSection from "./ProjectsSection";
 import CustomSectionEditor from "./CustomSectionEditor";
 import {
-  emptyExperience,
   emptyCustomSection,
   isCustomSectionKey,
   customSectionIdFromKey,
@@ -81,7 +80,7 @@ export default function ResumeBuilderLayout({
       case "experience":
         return (
           <ExperienceSection
-            experience={structured.experience?.length ? structured.experience : [emptyExperience()]}
+            experience={structured.experience ?? []}
             onChange={(experience) => patch("experience", experience)}
           />
         );
