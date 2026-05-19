@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Check, ChevronRight, Download, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight, Download, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import ResumePageHeader from "../../components/resume/ResumePageHeader";
 import { ResumePageSkeleton } from "../../components/resume/LoadingSkeletons";
@@ -26,6 +26,7 @@ import {
   builderPreviewChrome,
 } from "../../components/resume/builder/builderTheme";
 import BackendLoadingOverlay from "../../components/ui/BackendLoadingOverlay";
+import ResumeSaveStatus from "../../components/resume/builder/ResumeSaveStatus";
 
 function FlowBackBar({ label, onBack }) {
   if (!onBack) return null;
@@ -83,19 +84,19 @@ export default function ResumeBuilderPage() {
     }
   };
 
-  const handleSave = async () => {
+  const handleConfirmImport = async () => {
     try {
-      await builder.saveNow();
-      toast.success("Resume saved");
+      await builder.confirmImportResume();
+      toast.success("Resume saved — keep editing or export PDF");
     } catch (err) {
       toast.error(err.message || "Save failed");
     }
   };
 
-  const handleConfirmImport = async () => {
+  const handleRetrySave = async () => {
     try {
-      await builder.confirmImportResume();
-      toast.success("Resume saved — keep editing or export PDF");
+      await builder.saveNow();
+      toast.success("Resume saved");
     } catch (err) {
       toast.error(err.message || "Save failed");
     }
@@ -148,8 +149,9 @@ export default function ResumeBuilderPage() {
         ? "Import resume"
         : "Build from scratch";
 
-  const pageDescription =
-    builder.flow === "entry"
+  const pageDescription = showEditorActions
+    ? "Your resume saves automatically as you type — no need to click Save."
+    : builder.flow === "entry"
       ? "Import an existing resume or start fresh with a template."
       : builder.flow === "import"
         ? "Content first — structure what you have, then pick a template and polish."
@@ -164,16 +166,15 @@ export default function ResumeBuilderPage() {
         description={pageDescription}
         action={
           showEditorActions ? (
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={builder.saving}
-                className={builderBtnSecondary}
-              >
-                {builder.saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                Save
-              </button>
+            <div className="flex flex-col items-end gap-2">
+              <ResumeSaveStatus
+                enabled={builder.autoSave}
+                saving={builder.saving}
+                savePending={builder.savePending}
+                lastSavedAt={builder.lastSavedAt}
+                saveError={builder.saveError}
+                onRetry={handleRetrySave}
+              />
               <button
                 type="button"
                 onClick={handleExport}
@@ -206,7 +207,9 @@ export default function ResumeBuilderPage() {
         <div className={builderWarningBanner}>{builder.importBanner}</div>
       )}
 
-      {builder.saveError && <p className="mb-4 text-sm text-luxury-coral">{builder.saveError}</p>}
+      {builder.saveError && !showEditorActions && (
+        <p className="mb-4 text-sm text-luxury-coral">{builder.saveError}</p>
+      )}
 
       {/* ——— FLOW 0: Entry ——— */}
       {builder.flow === "entry" && (
@@ -411,6 +414,11 @@ function BuilderEditorGrid({ builder, Preview, activeSection, onSectionChange, o
   return (
     <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
       <div className={`${builderCard} flex min-h-[min(calc(100vh-12rem),780px)] flex-col`}>
+        {builder.autoSave && (
+          <p className="mb-3 rounded-lg border border-luxury-border/60 bg-luxury-muted/20 px-3 py-2 text-xs text-luxury-body">
+            Autosave is on — your changes are stored to your account as you edit.
+          </p>
+        )}
         <PasteAsTextPanel
           onApply={onPasteText}
           disabled={builder.saving}
