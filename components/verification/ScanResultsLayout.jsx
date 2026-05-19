@@ -1,6 +1,7 @@
 import ScamRiskRadial from "../charts/ScamRiskRadial";
 import RedFlagsBreakdown from "../charts/RedFlagsBreakdown";
 import HowToReadScan from "./HowToReadScan";
+import VerdictBanner from "./VerdictBanner";
 import { toScamRisk } from "../../lib/scamRisk";
 import { TrustPanel } from "../ui/TrustPanel";
 
@@ -18,6 +19,7 @@ export default function ScanResultsLayout({
 
   return (
     <div className="space-y-4">
+      {result?.verdict && <VerdictBanner verdict={result.verdict} />}
       <HowToReadScan />
 
       <div className="grid gap-4 lg:grid-cols-2">

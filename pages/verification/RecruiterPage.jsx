@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { useTrust } from "../../hooks/useTrust";
 import TrustIntelligencePanel from "../../components/trust/TrustIntelligencePanel";
@@ -10,6 +10,12 @@ import SaveRecruiterButton from "../../components/verification/SaveRecruiterButt
 import ScanResultsLayout from "../../components/verification/ScanResultsLayout";
 import VerificationResultCard from "../../components/verification/VerificationResultCard";
 import { toScamRisk } from "../../lib/scamRisk";
+import {
+  RECRUITER_DEMO_OPTIONS,
+  getRecruiterDemoForm,
+  getRecruiterDemoResult,
+  isRecruiterDemoMode,
+} from "../../lib/recruiterDemoScenarios";
 
 const EMPTY_FORM = {
   name: "",
@@ -22,13 +28,39 @@ const EMPTY_FORM = {
 export default function RecruiterPage() {
   const [values, setValues] = useState(EMPTY_FORM);
   const [result, setResult] = useState(null);
+  const [demoMode, setDemoMode] = useState("live");
   const { loading, verifyRecruiter } = useTrust();
+
+  const applyDemoMode = useCallback((mode) => {
+    setDemoMode(mode);
+    if (isRecruiterDemoMode(mode)) {
+      const form = getRecruiterDemoForm(mode);
+      const demoResult = getRecruiterDemoResult(mode);
+      if (form) setValues(form);
+      if (demoResult) setResult(demoResult);
+    } else {
+      setResult(null);
+    }
+  }, []);
 
   const handleChange = (key, value) => {
     setValues((prev) => ({ ...prev, [key]: value }));
+    if (isRecruiterDemoMode(demoMode)) {
+      setDemoMode("live");
+      setResult(null);
+    }
   };
 
   const handleSubmit = async () => {
+    if (isRecruiterDemoMode(demoMode)) {
+      const demoResult = getRecruiterDemoResult(demoMode);
+      if (demoResult) {
+        setResult(demoResult);
+        toast.success(`Demo loaded — verdict: ${demoResult.verdict}`);
+      }
+      return;
+    }
+
     try {
       const data = await verifyRecruiter(values);
       setResult(data);
@@ -37,6 +69,8 @@ export default function RecruiterPage() {
       toast.error(err.message || "Verification failed");
     }
   };
+
+  const isDemo = result?.isDemo || isRecruiterDemoMode(demoMode);
 
   return (
     <div className="w-full space-y-4">
@@ -54,6 +88,9 @@ export default function RecruiterPage() {
         onChange={handleChange}
         onSubmit={handleSubmit}
         loading={loading}
+        demoMode={demoMode}
+        onDemoModeChange={applyDemoMode}
+        demoOptions={RECRUITER_DEMO_OPTIONS}
       />
 
       {result && (
@@ -64,10 +101,11 @@ export default function RecruiterPage() {
             <VerificationResultCard
               result={{
                 trustScore: result.trustScore,
-                riskScore: toScamRisk({ ...result, type: "recruiter" }),
+                riskScore: result.riskScore ?? toScamRisk({ ...result, type: "recruiter" }),
                 riskTier: result.riskTier,
                 scanId: result.scanId,
                 fingerprint: result.fingerprint,
+                verdict: result.verdict,
               }}
             />
           }
@@ -83,7 +121,7 @@ export default function RecruiterPage() {
             <>
               <BadgeList badges={result.badges} />
               <MatchHistoryTable matches={result.historyMatches} />
-              <SaveRecruiterButton scanId={result.scanId} />
+              {!isDemo && result.scanId && <SaveRecruiterButton scanId={result.scanId} />}
             </>
           }
         />

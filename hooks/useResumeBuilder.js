@@ -135,7 +135,7 @@ export function useResumeBuilder() {
       setSaveError(null);
       try {
         const primary = await api.saveStructured({
-          structured: data,
+          structured: normalizeStructured(data),
           selectedTemplateId: templateId,
           parseSource,
         });
@@ -157,7 +157,7 @@ export function useResumeBuilder() {
     async (data, { silent = false } = {}) => {
       if (!silent) setScoring(true);
       try {
-        const result = await api.scoreResume({ structured: data });
+        const result = await api.scoreResume({ structured: normalizeStructured(data) });
         setAtsScore(result.atsScore);
         setAtsReport(result.lastAtsReport);
         return result;
@@ -203,7 +203,7 @@ export function useResumeBuilder() {
   const setStructuredLocal = useCallback((updater) => {
     setStructured((prev) => {
       const next = typeof updater === "function" ? updater(prev) : updater;
-      return normalizeStructured(next);
+      return normalizeStructured(next, { trim: false });
     });
   }, []);
 

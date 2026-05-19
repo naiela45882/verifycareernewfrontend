@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useCompanyTrust } from "../../hooks/useTrust";
+import { getCompanyDemoDetail } from "../../lib/companyLookupDemoScenarios";
 import TrustIntelligencePanel from "../../components/trust/TrustIntelligencePanel";
 import TrustRatingRadial from "../../components/charts/TrustRatingRadial";
 
@@ -23,7 +24,13 @@ export default function CompanyTrustDetailPage() {
           setRating(c.userRating || 0);
         }
       } catch (err) {
-        if (!cancelled) toast.error(err.message || "Not found");
+        const demo = getCompanyDemoDetail(idOrSlug);
+        if (!cancelled && demo) {
+          setCompany(demo);
+          setRating(0);
+        } else if (!cancelled) {
+          toast.error(err.message || "Not found");
+        }
       } finally {
         if (!cancelled) setFetching(false);
       }
@@ -68,7 +75,7 @@ export default function CompanyTrustDetailPage() {
         <p className="mt-2 text-[11px] capitalize text-luxury-caption">
           Status: {company.claimStatus}
         </p>
-        {company.claimStatus === "unclaimed" && (
+        {company.claimStatus === "unclaimed" && !company.isDemo && (
           <button
             type="button"
             disabled={loading}
@@ -92,31 +99,39 @@ export default function CompanyTrustDetailPage() {
 
       {trustIntelligence && <TrustIntelligencePanel trustIntelligence={trustIntelligence} />}
 
-      <section className="rounded-xl border border-luxury-border p-4">
-        <h2 className="text-[13px] font-semibold text-luxury-ink">Community confirmation</h2>
-        <p className="mt-1 text-[12px] text-luxury-caption">Rate as a positive signal.</p>
-        <div className="mt-3 flex gap-1">
-          {[1, 2, 3, 4, 5].map((n) => (
-            <button
-              key={n}
-              type="button"
-              onClick={async () => {
-                setRating(n);
-                try {
-                  const updated = await rateCompany(company.id, n);
-                  setCompany((prev) => ({ ...prev, ...updated }));
-                  toast.success("Confirmation recorded");
-                } catch (err) {
-                  toast.error(err.message || "Failed");
-                }
-              }}
-              className={`h-8 w-8 rounded text-[14px] ${rating >= n ? "text-amber-500" : "text-luxury-border"}`}
-            >
-              ★
-            </button>
-          ))}
-        </div>
-      </section>
+      {!company.isDemo && (
+        <section className="rounded-xl border border-luxury-border p-4">
+          <h2 className="text-[13px] font-semibold text-luxury-ink">Community confirmation</h2>
+          <p className="mt-1 text-[12px] text-luxury-caption">Rate as a positive signal.</p>
+          <div className="mt-3 flex gap-1">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={async () => {
+                  setRating(n);
+                  try {
+                    const updated = await rateCompany(company.id, n);
+                    setCompany((prev) => ({ ...prev, ...updated }));
+                    toast.success("Confirmation recorded");
+                  } catch (err) {
+                    toast.error(err.message || "Failed");
+                  }
+                }}
+                className={`h-8 w-8 rounded text-[14px] ${rating >= n ? "text-amber-500" : "text-luxury-border"}`}
+              >
+                ★
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+      {company.isDemo && (
+        <p className="rounded-lg border border-luxury-border/60 bg-luxury-muted/20 px-3 py-2 text-[12px] text-luxury-body">
+          Demo profile — ratings and claims are disabled. Run{" "}
+          <code className="text-[11px]">npm run seed-dev</code> in backend for live data.
+        </p>
+      )}
     </div>
   );
 }

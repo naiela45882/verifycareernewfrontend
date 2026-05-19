@@ -8,7 +8,15 @@ const FIELDS = [
   { key: "jobUrl", label: "Job post URL (optional)", type: "url", required: false },
 ];
 
-export default function RecruiterForm({ values, onChange, onSubmit, loading }) {
+export default function RecruiterForm({
+  values,
+  onChange,
+  onSubmit,
+  loading,
+  demoMode = "live",
+  onDemoModeChange,
+  demoOptions = [],
+}) {
   return (
     <section className="rounded-xl border border-luxury-border bg-luxury-surface p-6 shadow-soft">
       <header className="mb-4">
@@ -19,6 +27,34 @@ export default function RecruiterForm({ values, onChange, onSubmit, loading }) {
           We validate email domain, patterns, and cross-match prior scam fingerprints.
         </p>
       </header>
+
+      {demoOptions.length > 0 && onDemoModeChange && (
+        <label className="mb-4 block">
+          <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-luxury-caption">
+            Try a demo scenario
+          </span>
+          <select
+            value={demoMode}
+            onChange={(e) => onDemoModeChange(e.target.value)}
+            className={cn(
+              "mt-1.5 w-full rounded-lg border border-luxury-border bg-luxury-muted/30 px-3 py-2.5",
+              "text-[13px] text-luxury-ink focus:border-luxury-accent/40 focus:outline-none focus:ring-2 focus:ring-luxury-accent/15"
+            )}
+          >
+            {demoOptions.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          {demoMode !== "live" && (
+            <p className="mt-1.5 text-[12px] text-luxury-body">
+              Demo mode — sample data is shown below. Switch to live verification to check your own
+              recruiter.
+            </p>
+          )}
+        </label>
+      )}
 
       <form
         onSubmit={(e) => {
@@ -58,7 +94,11 @@ export default function RecruiterForm({ values, onChange, onSubmit, loading }) {
               "hover:bg-luxury-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
             )}
           >
-            {loading ? "Verifying…" : "Verify recruiter"}
+            {loading
+              ? "Verifying…"
+              : demoMode !== "live"
+                ? "Show demo result"
+                : "Verify recruiter"}
           </button>
         </div>
       </form>
