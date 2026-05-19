@@ -13,9 +13,16 @@ export default function VerificationResultCard({ result }) {
   return (
     <section className="rounded-xl border border-luxury-border bg-luxury-surface p-6 shadow-soft">
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold tracking-tight text-luxury-ink">
-          Verification result
-        </h2>
+        <div>
+          <h2 className="text-lg font-semibold tracking-tight text-luxury-ink">
+            Verification result
+          </h2>
+          {result.verdict && (
+            <p className="mt-1 text-[13px] font-medium text-luxury-body">
+              Label: <span className="text-luxury-ink">{result.verdict}</span>
+            </p>
+          )}
+        </div>
         <RiskBadge tier={result.riskTier} score={scamRisk} />
       </header>
 

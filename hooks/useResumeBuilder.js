@@ -47,6 +47,8 @@ export function useResumeBuilder() {
   const [loading, setLoading] = useState(true);
   const [importing, setImporting] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [savePending, setSavePending] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState(null);
   const [scoring, setScoring] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [importBanner, setImportBanner] = useState(null);
@@ -92,6 +94,7 @@ export function useResumeBuilder() {
       const hasContent = hasStructuredContent(data);
       setHasExistingResume(hasContent);
       setSavedParseSource(primary?.parseSource || "manual");
+      setLastSavedAt(primary?.updatedAt ? new Date(primary.updatedAt) : null);
 
       const wizard = readWizardState();
       const wizardImport =
@@ -128,15 +131,17 @@ export function useResumeBuilder() {
   const persist = useCallback(
     async (data, templateId, parseSource) => {
       setSaving(true);
+      setSavePending(false);
       setSaveError(null);
       try {
         const primary = await api.saveStructured({
-          structured: data,
+          structured: normalizeStructured(data),
           selectedTemplateId: templateId,
           parseSource,
         });
         setAtsScore(primary?.lastAtsScore ?? null);
         setAtsReport(primary?.lastAtsReport ?? null);
+        setLastSavedAt(primary?.updatedAt ? new Date(primary.updatedAt) : new Date());
         return primary;
       } catch (err) {
         setSaveError(err.message || "Save failed");
@@ -152,7 +157,7 @@ export function useResumeBuilder() {
     async (data, { silent = false } = {}) => {
       if (!silent) setScoring(true);
       try {
-        const result = await api.scoreResume({ structured: data });
+        const result = await api.scoreResume({ structured: normalizeStructured(data) });
         setAtsScore(result.atsScore);
         setAtsReport(result.lastAtsReport);
         return result;
@@ -180,7 +185,9 @@ export function useResumeBuilder() {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     if (scoreTimer.current) clearTimeout(scoreTimer.current);
 
+    setSavePending(true);
     saveTimer.current = setTimeout(async () => {
+      setSavePending(false);
       try {
         await persist(structuredRef.current, templateRef.current);
       } catch {
@@ -196,7 +203,7 @@ export function useResumeBuilder() {
   const setStructuredLocal = useCallback((updater) => {
     setStructured((prev) => {
       const next = typeof updater === "function" ? updater(prev) : updater;
-      return normalizeStructured(next);
+      return normalizeStructured(next, { trim: false });
     });
   }, []);
 
@@ -248,6 +255,7 @@ export function useResumeBuilder() {
   const returnToEntry = useCallback(() => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     if (scoreTimer.current) clearTimeout(scoreTimer.current);
+    setSavePending(false);
     setFlow("entry");
     setImportStep("upload");
     setScratchStep("template");
@@ -379,6 +387,7 @@ export function useResumeBuilder() {
 
   const saveNow = useCallback(async () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
+    setSavePending(false);
     return persist(structuredRef.current, templateRef.current);
   }, [persist]);
 
@@ -401,6 +410,8 @@ export function useResumeBuilder() {
     loading,
     importing,
     saving,
+    savePending,
+    lastSavedAt,
     scoring,
     saveError,
     importBanner,
